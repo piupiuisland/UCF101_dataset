@@ -7,7 +7,7 @@ RAR_FILE="UCF101.rar"
 
 # Step 1: Download the file
 echo "Downloading UCF101 dataset..."
-wget -O $RAR_FILE $URL
+wget --no-check-certificate -O $RAR_FILE $URL  # Added --no-check-certificate
 
 # Step 2: Check if unrar is installed
 if ! command -v unrar &> /dev/null
