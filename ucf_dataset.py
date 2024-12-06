@@ -2,11 +2,13 @@ import torch
 import os
 import numpy as np
 import cv2
+import random
 
 from typing import Any, Optional, Dict, Union, Tuple, List
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, Sampler
 
 LOCAL_UCF_PATH = "/home/ubuntu/work_root/llm_repo/text2video_eval/ucf101_dataset/"
+
 
 UCF_LABELS = {
     "ApplyEyeMakeup" :	"Apply Eye Makeup",
@@ -153,7 +155,6 @@ def video_to_numpy(video_path, target_size=[720, 480], return_5d_array=False):
 
 
 
-
 class UCFDataSet(Dataset):
 
     def __init__(
@@ -245,12 +246,35 @@ class UCFDataSet(Dataset):
         return prompts, videos
 
 
+class SubsetSampler(Sampler):
+    """
+    dataset_sampler
+
+    """
+
+    def __init__(
+        self,
+        data_source: Optional[Dataset] = None,
+        subset_size: int=100
+        ) -> None:
+
+        self.data_source = data_source
+
+        self.indices = random.choices(range(len(data_source)), k=subset_size)
+
+    def __iter__(self):
+        return iter(self.indices)
+
+    def __len__(self):
+        return len(self.indices)
+
+
+
 if __name__ == "__main__":
 
     train_set = UCFDataSet(split='train')
 
     sample = train_set
-
 
     train_loader = DataLoader(train_set, batch_size=16, shuffle=True, collate_fn=UCFDataSet.ucf_collate_fn, pin_memory=False)
 

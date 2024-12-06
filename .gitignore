@@ -2,3 +2,5 @@
 *.avi
 UCF-101/*
 UCF101.rar
+*__pycache__
+__pycache__
