@@ -113,13 +113,14 @@ UCF_LABELS = {
 }
 
 
-def video_to_numpy(video_path, return_5d_array=False):
+def video_to_numpy(video_path, target_size=[720, 480], return_5d_array=False):
     """
     Reads a video file and converts it to a NumPy array.
 
     Args:
         video_path (str): Path to the video file.
         return_5d_array (bool): if true output will be a 5d array, else 4d
+        target_size (list[int]): [w, h], defaults to [720, 480]
 
     Returns:
         frames (numpy.ndarray): Array of shape (B, N, H, W, C), where:
@@ -133,15 +134,18 @@ def video_to_numpy(video_path, return_5d_array=False):
     frames = []
 
     while True:
-        ret, frame = cap.read()
+        ret, frame = cap.read()    # frame is [h, w, 3]
         if not ret:
             break  # Exit loop if no more frames
+
+        frame = cv2.resize(frame, target_size[::-1], interpolation=cv2.INTER_CUBIC)
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert BGR to RGB
         frames.append(frame_rgb)
 
     cap.release()
 
     frames = np.array(frames)
+    frames = np.transpose(frames, (0,3,1,2))
     if return_5d_array == True:
         return np.expand_dims(frames, axis=0)
     else:
@@ -156,10 +160,12 @@ class UCFDataSet(Dataset):
         self,
         path : str=LOCAL_UCF_PATH,
         split : str="train",
+        size : List[int] = [480,720],    # h, w
         ):
 
         self.folder_path = os.path.join(path, "UCF-101")
         self.split = split
+        self.video_size = size
 
         if split == "train":
             video_list = "trainlist01.txt"
@@ -208,7 +214,7 @@ class UCFDataSet(Dataset):
         video_file = self.all_video_names[idx]
         prompt, video_class = self._match_video_class_and_prompt(video_file)
         video_file = os.path.join(self.folder_path, video_file)
-        video = video_to_numpy(video_file)
+        video = video_to_numpy(video_file, target_size=self.video_size)
 
         # Skip this item if shape[0] < 100
         if video.shape[0] < 110:
