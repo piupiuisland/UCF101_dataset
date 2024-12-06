@@ -14,7 +14,7 @@ asttokens==3.0.0
 async-timeout==5.0.1
 attrs==24.2.0
 av==14.0.0
--e git+ssh://git@github.com/axelera-ai/tools.pytorch-model-profiler.git@ee162fd4c583aa2bde2de8e159a744923ff0e89e#egg=axprofiler
+# -e git+ssh://git@github.com/axelera-ai/tools.pytorch-model-profiler.git@ee162fd4c583aa2bde2de8e159a744923ff0e89e#egg=axprofiler
 boto3==1.35.71
 botocore==1.35.71
 braceexpand==0.1.7
@@ -57,7 +57,6 @@ fonttools==4.55.1
 frozenlist==1.5.0
 fsspec==2024.2.0
 ftfy==6.3.1
-geminiplayground==0.11.0
 gitdb==4.0.11
 GitPython==3.1.43
 google-ai-generativelanguage==0.6.4
@@ -255,3 +254,7 @@ xxhash==3.5.0
 yarl==1.18.0
 yaspin==3.1.0
 zipp==3.21.0
+
+## geminiplayground need to be installed this:
+# pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ geminiplayground
+# pip3 install torch torchvision torchaudio
