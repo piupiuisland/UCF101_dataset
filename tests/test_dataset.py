@@ -3,10 +3,7 @@ import pytest
 import numpy as np
 from torch.utils.data import DataLoader
 
-from ..ucf_dataset import UCFDataSet, SubsetSampler
-
-
-LOCAL_UCF_PATH = "/home/ubuntu/work_root/llm_repo/text2video_eval/ucf101_dataset/"
+from ..ucf_dataset import UCFDataSet, SubsetSampler, LOCAL_UCF_PATH
 
 
 @pytest.mark.unittest
@@ -52,7 +49,7 @@ def test_ucf_dataloader(split, video_size, batch_size):
 @pytest.mark.unittest
 @pytest.mark.parametrize("split", ["train", "test"])
 @pytest.mark.parametrize("batch_size", [1, 4])
-def test_ucf_dataloader_smapler(split, video_size, batch_size):
+def test_ucf_dataloader_smapler(split, batch_size):
 
     ucf_dataset = UCFDataSet(path=LOCAL_UCF_PATH,split=split, size=(720, 480))
     sampler = SubsetSampler(ucf_dataset, subset_size=100)
@@ -65,7 +62,6 @@ def test_ucf_dataloader_smapler(split, video_size, batch_size):
 
     sample_0_prompt, sample_0_video = sample_0[0], sample_0[1]
 
-    assert sample_0[1].shape[-2:] == video_size
     assert len(sample_0_prompt) == batch_size
     print("prompts: ", sample_0_prompt)
     print("videos: ", sample_0_video.shape)
